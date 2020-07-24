@@ -15,7 +15,7 @@ On your _real_ local machine pull:
 `git pull https://github.com/pradyparanjpe/azure_scripts.git`
 
 ### Modifications
-Add _your packages_ in the folder [[packages][./packages/]] inside your local machine
+Add _your packages_ in the folder [packages](./packages/) inside your local machine
 
 ### Copy
 Start Azure virtual machine and copy the contents of the git folder to the Azure virtual machine using a command such as
@@ -27,18 +27,22 @@ See *Requirements* section
 
 ### Run script
 On Azure virtual machine,
+
 `nohup ${HOME}/azure_scripts/ubuntu_cuda_installation.sh <PACKAGE_FOLDER_NAME> 2>&1 > installation.log`
 
 ## Requirements
 On the Azure VM, issue the following commands with necessary modifications:
 
 1. Let bash read rc file in this project
+
 `$ echo "[[ -f $\{HOME\}/azure_scripts/bashrc ]] && . $\{HOME\}/azure_scripts/bashrc" >> ${HOME}/.bashrc`
 
 2. Declare virtual machine name that is to be deallocated after the installation
+
 `$ echo "VM_NAME=<YOUR VIRTUAL MACHINE NAME>" >> ${HOME}/.bashrc`
 
 2. Declare group name of virtual machine that is to be deallocated after the installation
+
 `$ echo "VM_GROUP=<YOUR VIRTUAL MACHINE GROUP>" >> ${HOME}/.bashrc`
 
 ## Package requirements:
