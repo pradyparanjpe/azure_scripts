@@ -24,24 +24,6 @@ date
 echo "Started script"
 
 # Functions
-variableDeclaration() {
-    date
-    echo "checking variables"
-
-    [[ -z ${1} ]] && echo "Package Name not supplied, aborting..." && exit 5
-    AZUREGIT="${HOME}/azure_scripts"
-    PYPKGENV="${AZUREGIT}/.virtualenvs/${1}ENV"
-    PYPKGSRC="${AZUREGIT}/packages/${1}"
-
-    [[ -z ${VM_NAME} ]] \
-        && echo "Script can't exit automatically, export $VM_NAME, aborting" \
-        && exit 5
-    [[ -z ${VM_GROUP} ]] \
-        && echo "Script can't exit automatically, export $VM_GROUP, aborting" \
-        && exit 5
-    echo "We are on ${VM_NAME} in the group ${VM_GROUP}"
-}
-
 aptBasics() {
     date
     echo "Updating APT"
@@ -58,6 +40,31 @@ installAzureCLI() {
     [[ $? -ne 0 ]] \
         && echo "Could not install Azure commands, aborting..." \
         && exit 5
+}
+
+firstRun() {
+    hash az \
+        && echo "Azure is already installed, please provide package name to install."\
+            || installAzureCLI
+    exit 0
+}
+
+variableDeclaration() {
+    date
+    echo "checking variables"
+
+    [[ -z ${1} ]] && firstRun
+    AZUREGIT="${HOME}/azure_scripts"
+    PYPKGENV="${AZUREGIT}/.virtualenvs/${1}ENV"
+    PYPKGSRC="${AZUREGIT}/packages/${1}"
+
+    [[ -z ${VM_NAME} ]] \
+        && echo "Script can't exit automatically, export $VM_NAME, aborting" \
+        && exit 5
+    [[ -z ${VM_GROUP} ]] \
+        && echo "Script can't exit automatically, export $VM_GROUP, aborting" \
+        && exit 5
+    echo "We are on ${VM_NAME} in the group ${VM_GROUP}"
 }
 
 vmDeallocate() {

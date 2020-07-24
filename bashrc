@@ -19,3 +19,5 @@
 # along with Prady_AzScripts.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+VM_NAME=  # Virtual machine name
+VM_GROUP=  # Virtual machine group name here

@@ -35,20 +35,30 @@ On the Azure VM, issue the following commands with necessary modifications:
 
 1. Let bash read rc file in this project
 
-`$ echo "[[ -f $\{HOME\}/azure_scripts/bashrc ]] && . $\{HOME\}/azure_scripts/bashrc" >> ${HOME}/.bashrc`
+`echo "[[ -f $\{HOME\}/azure_scripts/bashrc ]] && . $\{HOME\}/azure_scripts/bashrc" >> ${HOME}/.bashrc`
 
-2. Declare virtual machine name that is to be deallocated after the installation
 
-`$ echo "VM_NAME=<YOUR VIRTUAL MACHINE NAME>" >> ${HOME}/.bashrc`
+2. Declare virtual machine name and group in [bashrc](bashrc) file
 
-2. Declare group name of virtual machine that is to be deallocated after the installation
 
-`$ echo "VM_GROUP=<YOUR VIRTUAL MACHINE GROUP>" >> ${HOME}/.bashrc`
+3. Azure CLI installation: PROCEED WITH CAUTION, read [ALL related documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
+  - Run the raw script without without arguments. It will install AzureCLI.
+
+  `${HOME}/azure_scripts/ubuntu_cuda_installation.sh`
+
+  - Login to azure virtual machine:
+
+  `az login`
+
+  - Follow instuctions (Open a link in web-browser and supply the displayed `KEY`)
+
+  - Now, the AzureCLI API has been granted access to manage your Azure virtual machines.
+  
 
 ## Package requirements:
 1. Python:
    - Package should be pip3 compatible.
-   - Setup.py must be present in the parent package folder, I do not look recursively.
+   - setup.py must be present in the parent package folder, I do not look recursively.
    - Only pip3 dependencies will be installed
 2. C/Cpp:
    - Package should be generally installable by issuing `./configure; make; make install`
