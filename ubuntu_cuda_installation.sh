@@ -31,21 +31,27 @@ aptBasics() {
 }
 
 installAzureCLI() {
-    # Ready-made recipe
     date
     aptBasics
     echo "Install AzureCLI API to deallocate vm after commands are complete"
 
+    # Ready-made recipe
     curl -sL "https://aka.ms/InstallAzureCLIDeb" | sudo bash
     [[ $? -ne 0 ]] \
-        && echo "Could not install Azure commands, aborting..." \
+        && echo "Could not install AzureCLI, aborting..." \
         && exit 5
 }
 
 firstRun() {
     hash az \
-        && echo "Azure is already installed, please provide package name to install."\
+        && echo "AzureCLI is already installed, please provide package name to install."\
             || installAzureCLI
+    echo "AzureCLI Is now installed"
+    echo "Now issue the command..."
+    echo ""
+    echo "az login"
+    echo ""
+    echo "...and follow instructions"
     exit 0
 }
 
@@ -53,7 +59,7 @@ variableDeclaration() {
     date
     echo "checking variables"
 
-    [[ -z ${1} ]] && firstRun
+    [[ -z ${1} ]] && firstRun && exit 0
     AZUREGIT="${HOME}/azure_scripts"
     PYPKGENV="${AZUREGIT}/.virtualenvs/${1}ENV"
     PYPKGSRC="${AZUREGIT}/packages/${1}"
@@ -155,7 +161,8 @@ installProg() {
 # main program
 main() {
     variableDeclaration
-    hash az || installAzureCLI
+    hash az || \
+        echo "AZURE CLI NOT INSTALLED, resource deallocation not possible"
     hash nvidia-smi || installCUDA
     hash pip3 || installPython
     [[ -f "${PYPKGVENV}/bin/activate" ]] || venvBasics

@@ -20,7 +20,7 @@ Add _your packages_ in the folder [packages](./packages/) inside your local mach
 ### Copy
 Start Azure virtual machine and copy the contents of the git folder to the Azure virtual machine using a command such as
 
-`rsync ./azure_scripts uname@azure.ip:~/.`
+`rsync -auvz ./azure_scripts uname@azure.ip:~/.`
 
 ### Fulfil Requirements
 See *Requirements* section
@@ -28,7 +28,7 @@ See *Requirements* section
 ### Run script
 On Azure virtual machine,
 
-`nohup ${HOME}/azure_scripts/ubuntu_cuda_installation.sh <PACKAGE_FOLDER_NAME> 2>&1 > installation.log`
+`nohup ${HOME}/azure_scripts/ubuntu_cuda_installation.sh <PACKAGE_FOLDER_NAME> 2>&1 >> installation.log`
 
 ## Requirements
 On the Azure VM, issue the following commands with necessary modifications:
