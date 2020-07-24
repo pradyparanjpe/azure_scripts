@@ -142,7 +142,7 @@ installProg() {
     ln -s "${PYPKGENV}" "${PYPKGSRC}/.venv"
 
     echo "PIP installing ${1}"
-    pip3 install .  # Assume that it contains setup.py
+    pip3 install "."  # Assume that it contains setup.py
 }
 
 # main program
