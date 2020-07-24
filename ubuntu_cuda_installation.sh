@@ -28,8 +28,10 @@ variableDeclaration() {
     date
     echo "checking variables"
 
-    PYPKGENV="${HOME}/.virtualenvs/${1}ENV"
-    PYPKGSRC="${HOME}/packages/${1}"
+    [[ -z ${1} ]] && echo "Package Name not supplied, aborting..." && exit 5
+    AZUREGIT="${HOME}/azure_scripts"
+    PYPKGENV="${AZUREGIT}/.virtualenvs/${1}ENV"
+    PYPKGSRC="${AZUREGIT}/packages/${1}"
 
     [[ -z ${VM_NAME} ]] \
         && echo "Script can't exit automatically, export $VM_NAME, aborting" \
@@ -52,7 +54,7 @@ installAzureCLI() {
     aptBasics
     echo "Install AzureCLI API to deallocate vm after commands are complete"
 
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    curl -sL "https://aka.ms/InstallAzureCLIDeb" | sudo bash
     [[ $? -ne 0 ]] \
         && echo "Could not install Azure commands, aborting..." \
         && exit 5
