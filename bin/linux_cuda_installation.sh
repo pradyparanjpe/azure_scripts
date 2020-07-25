@@ -31,122 +31,57 @@ function aptBasics() {
     sudo apt -y update
 }
 
-function debInAzure() {
-    # Ready-made recipe
-    aptBasics
-    curl -sL "https://aka.ms/InstallAzureCLIDeb" | sudo bash
-    [[ $? -ne 0 ]] \
-        && echo "Could not install AzureCLI, aborting..." \
-        && exit 5
-}
-
-function rpmInAzure() {
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    sudo sh -c 'echo -e "[azure-cli]
-name=Azure CLI
-baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
-    sudo yum -y install azure-cli
-    [[ $? -ne 0 ]] \
-        && echo "Could not install AzureCLI, aborting..." \
-        && exit 5
-}
-
-function installAzureCLI() {
-    date
-    echo "Install AzureCLI API to deallocate vm after commands are complete"
-    distrib="$(hostnamectl | grep "Operating" | cut -d ":" -f 2 |cut -d " " -f 2)"
-    case "$distrib" in
-        [Ff]ed* )
-            rpmInAzure
-            ;;
-        [Cc]ent* )
-            rpmInAzure
-            ;;
-        [Rr]ed* )
-            rpmInAzure
-            ;;
-        *[Uu]bunt* )
-            debInAzure
-            ;;
-        [Dd]ebian* )
-            debInAzure
-            ;;
-        *)
-            echo "Could not guess Linux Distribution, aborting..."
-            exit 5
-    esac
-}
-
-function firstRun() {
-    echo "AzureCLI Is now installed"
-    hash az \
-        && echo "AzureCLI already installed. \
-If not already done, login as below."\
-            || installAzureCLI
-    echo "Now issue the command..."
-    echo ""
-    echo "az login"
-    echo ""
-    echo "...and follow instructions"
-    exit 0
-}
-
 function variableDeclaration() {
     date
-    while test $# -gt 0; do
+    while [[ $# -gt 0 ]]; do
         case "$1" in
             -h|--help)
                 echo ""
-                echo "usage: psub [-h|--help] [-a] [-p PKG] [-n VMN] [-g VMG]"
+                echo "usage: linux_cuda_installation [-h|--help] [PKG]"
                 echo ""
                 echo "Optional arguments:"
-                echo "-h|--help Display this help and exit"
-                echo "-a        install AzureCLI API and exit"
-                echo "-p PKG    package name as supplied during installation"
-                echo "          environment will be guessed from this name"
-                echo "-n VMN    Name of virtual machine, used for deallocation"
-                echo "-g VMG    Group of virtual machine, used for deallocation"
+                echo "-h|--help   Display this help and exit"
+                echo ""
+                echo "Optional Positional arguments:"
+                echo "PKG      Name of Python Package to be installed"
+                echo "         It must have been copied in ${AZUREGIT}/packages"
+                echo "         Default: All packages will be installed afresh"
                 echo ""
                 exit 0
-                ;;
-            -a)
-                firstRun
-                exit 0
-                ;;
-            -p)
-                shift
-                PKG_NAME=$1
-                shift
-                ;;
-            -n)
-                shift
-                VM_NAME=$1
-                shift
-                ;;
-            -g)
-                shift
-                VM_GROUP=$1
                 shift
                 ;;
             *)
-                echo "Invalid command"
-                echo "aborting..."
-                vmDeallocate
+                PKG_NAME=$1
+                shift
                 ;;
         esac
     done
-    AZUREGIT="${HOME}/azure_scripts"
-    PYPKGENV="${AZUREGIT}/.virtualenvs/${PKG_NAME}ENV"
-    [[ -z ${VM_NAME} ]] \
+}
+
+function preInstallCheck() {
+    # Pre installation Checks
+    hash az
+    [[ $? -ne 0 ]] \
+        && echo "Please run linux_install_azurecli.sh form bin directory" \
+        && exit 5
+    [[ -z "${AZUREGIT}" ]] \
+        && echo "Please run linux_install_azurecli.sh form bin directory" \
+        && exit 5
+    [[ -z "${VM_NAME}" ]] \
         && echo "Script can't exit automatically, export $VM_NAME, aborting" \
         && exit 5
-    [[ -z ${VM_GROUP} ]] \
+    [[ -z "${VM_GROUP}" ]] \
         && echo "Script can't exit automatically, export $VM_GROUP, aborting" \
         && exit 5
-    echo "We are on ${VM_NAME} in the group ${VM_GROUP}"
+    echo "We're working on ${VM_NAME} in the group ${VM_GROUP}"
+
+    # Packages
+    if [[ -n "$PKG_NAME" ]]; then
+        PYPKGLIST="PKG_NAME"
+    else
+        # Discover packages
+        PYPKGLIST="$(ls -d ${AZUREGIT}/packages/*/)"
+    fi
 }
 
 function vmDeallocate() {
@@ -160,25 +95,40 @@ function vmDeallocate() {
     exit 5
 }
 
+function rpmCUDA() {
+    sudo dnf -y install kernel-devel-$(uname -r) kernel-headers-$(uname -r)
+    sudo dnf -y install gcc
+    sudo dnf -y config-manager --add-repo \
+         http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
+    sudo dnf -y module install nvidia-driver:latest-dkms
+    sudo dnf -y install cuda
+    echo "Installed propreitary nvidia-cuda"
+    }
+
 function installCUDA() {
     date
-    aptBasics
-    echo "APT Installing nvidia-cuda-toolkit"
-    sudo apt -y install nvidia-cuda-toolkit
-    [[ $? -ne 0 ]] \
-        && echo "Could not install cuda toolkit, aborting..." \
-        && vmDeallocate
+    hash apt && aptBasics
+    hash apt && sudo apt -y install nvidia-cuda-toolkit && \
+        echo "installed cuda-toolkit"
+    hash dnf && rpmCUDA
 }
 
 function venvBasics() {
     date
-    echo "Creating PYPKGENV"
-    mkdir -p "${PYPKGENV}"
-    python3 -m "virtualenv" "${PYPKGENV}" -p `which python3`
-
-    [[ $? -ne 0 ]] \
-        && echo "Could not activate create environment, aborting..." \
-        && vmDeallocate
+    for PYPKG in "$PYPKGLIST"; do
+        PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
+        if [[ ! -f "${AZUREGIT}/packages/${PYPKG}/setup.py" ]]; then
+            echo "${PYPKG} lacks the file 'setup.py', skipping"
+            continue;
+        fi
+        echo "Creating ${PYPKGENV}"
+        mkdir -p "${PYPKGENV}"
+        python3 -m "virtualenv" "${PYPKGENV}" -p `which python3`
+        if[[ $? -ne 0 ]]; then
+            echo "Could not create environment, skipping..."
+            continue
+        fi
+    done
 }
 
 function installPython() {
@@ -186,63 +136,47 @@ function installPython() {
     echo "APT Installing pip, virtualenv"
 
     aptBasics
-    sudo apt -y install python3-pip
-    sudo apt -y install python3-virtualenv
-    [[ $? -ne 0 ]] \
-        && echo "Could not install Python, pip aborting..." \
-        && vmDeallocate
-
-    # Who uses py2 (!) python is always python3
-    alias python=python3
-    alias pip=pip3
-}
-
-function pipRequires() {
-    date
-    echo "installing PIP requrements"
-
-    # activate PYPKG
-    hash deactivate && deactivate
-    source "${PYPKGENV}/bin/activate"
-
-    pip3 install numpy
-    pip3 install pygmo
-    [[ ${VM_NAME} -ne "DH5A" ]] && pip3 install cupy
+    hash apt && sudo apt -y install python3-pip
+    hash apt && sudo apt -y install python3-virtualenv
+    hash dnf && sudo dnf -y install python3-pip
+    hash dnf && sudo dnf -y install python3-virtualenv
 }
 
 function installProg() {
     date
-    [[ ! -d "${PYPKGSRC}" ]] \
-        && echo "Package Directory not found, exitting..." \
-        && vmDeallocate
-    echo "installing Program"
+    for PYPKG in $PYPKGLIST; do
+        PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
+        PYPKGSRC="${AZUREGIT}/packages/${PYPKG}"
+        if [[ ! -d "${PYPKGSRC}" ]]; then
+            echo "Package Directory not found, exitting..."
+            continue
+        fi
+        echo "installing Program"
 
-    # activate PYPKG
-    hash deactivate && deactivate
-    source "${PYPKGENV}/bin/activate"
+        # activate PYPKG
+        hash deactivate && deactivate
+        source "${PYPKGENV}/bin/activate"
 
-    # Enter Package directory
+        # Enter Package directory
 
-    cd "${PYPKGSRC}"
-    echo "Entered ${PWD}"
+        cd "${PYPKGSRC}"
+        echo "Entered ${PWD}"
 
-    # Link virtual environment to package
-    # This helps automatic switching
-    ln -s "${PYPKGENV}" "${PYPKGSRC}/.venv"
+        # Link virtual environment to package
+        # This helps automatic switching
+        ln -s "${PYPKGENV}" "${PYPKGSRC}/.venv"
 
-    echo "PIP installing ${PKG_NAME}"
-    pip3 install "."  # Assume that it contains setup.py
+        echo "PIP installing ${PKG_NAME}"
+        pip3 install "."  # Assume that it contains setup.py
+    done
 }
 
 function main() {
     # main program
     variableDeclaration $@
-    hash az || \
-        echo "AZURE CLI NOT INSTALLED, resource deallocation not possible"
     hash nvidia-smi || installCUDA
     hash pip3 || installPython
     [[ -f "${PYPKGVENV}/bin/activate" ]] || venvBasics
-    pipRequires
     installProg
     vmDeallocate
 }
