@@ -60,7 +60,7 @@ function argParse() {
 
 function preInstallCheck() {
     # Pre installation Checks
-    hash az
+    hash az 2>/dev/null
     [[ $? -ne 0 ]] \
         && echo "Please run linux_install_azurecli.sh form bin directory" \
         && exit 5
@@ -86,7 +86,7 @@ function preInstallCheck() {
 
 function vmDeallocate() {
     # Done, don't waste any more system time...
-    hash az \
+    hash az 2>/dev/null \
         || echo "could not deactivate vm: az AzureCLI API not found. Idle:"
     date
     echo "Trying to power off and deallocate vm"
@@ -107,10 +107,10 @@ function rpmCUDA() {
 
 function installCUDA() {
     date
-    hash apt && aptBasics
-    hash apt && sudo apt -y install nvidia-cuda-toolkit && \
+    hash apt 2>/dev/null && aptBasics
+    hash apt 2>/dev/null && sudo apt -y install nvidia-cuda-toolkit && \
         echo "installed cuda-toolkit"
-    hash dnf && rpmCUDA
+    hash dnf 2>/dev/null && rpmCUDA
 }
 
 function venvCreate() {
@@ -136,8 +136,8 @@ function installPython() {
     date
     echo "APT Installing pip"
     aptBasics
-    hash apt && sudo apt -y install python3-pip
-    hash dnf && sudo dnf -y install python3-pip
+    hash apt 2>/dev/null && sudo apt -y install python3-pip
+    hash dnf 2>/dev/null && sudo dnf -y install python3-pip
 }
 
 function installProg() {
@@ -152,7 +152,7 @@ function installProg() {
         echo "installing Program"
 
         # activate PYPKG
-        hash deactivate && deactivate
+        hash 2>/dev/null deactivate && deactivate
         source "${PYPKGENV}/bin/activate"
 
         # Enter Package directory
@@ -173,8 +173,8 @@ function main() {
     # main program
     argParse "$@"
     preInstallCheck
-    hash nvidia-smi || installCUDA
-    hash pip3 || installPython
+    hash 2>/dev/null nvidia-smi || installCUDA
+    hash 2>/dev/null pip3 || installPython
     venvCreate
     installProg
     vmDeallocate

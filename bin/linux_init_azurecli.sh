@@ -76,7 +76,7 @@ function installAzureCLI() {
 
 function firstRun() {
     echo "AzureCLI Is now installed"
-    hash az \
+    hash az 2>/dev/null \
         && echo "AzureCLI already installed. \
 If not already done, login as below."\
             || installAzureCLI

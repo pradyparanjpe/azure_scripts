@@ -68,7 +68,7 @@ function variableDeclaration() {
 
 function vmDeallocate() {
     # Done, don't waste any more system time...
-    hash az \
+    hash az 2>/dev/null \
         || echo "could not deactivate vm: az AzureCLI API not found. Idle:"
     date
     echo "Trying to power off and deallocate vm"
@@ -80,7 +80,7 @@ function vmDeallocate() {
 function runProg() {
     date
     # activate PYPKG if exists
-    hash deactivate && deactivate
+    hash 2>/dev/null deactivate 2>/dev/null && deactivate
     [[ -n "${PYPKGENV}" ]] && source "${PYPKGENV}/bin/activate"
 
     stime="$(date "+%Y%m%d%H%M%S")"
@@ -104,7 +104,7 @@ function watchProg() {
 function main() {
     # main program
     variableDeclaration $@
-    hash az || \
+    hash az 2>/dev/null || \
         echo "AZURE CLI NOT INSTALLED, resource deallocation not possible"
     runProg
     watchProg
