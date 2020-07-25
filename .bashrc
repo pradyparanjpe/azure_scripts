@@ -19,6 +19,6 @@
 # along with Prady_AzScripts.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-[[ -f "${AZUREGIT}/bashrc" ]] && . "${AZUREGIT}/bashrc"
-export PATH="${PATH}:${AZUREGIT}/bin"
 export AZUREGIT="${HOME}/azure_scripts"
+export PATH="${PATH}:${AZUREGIT}/bin"
+[[ -f "${AZUREGIT}/bashrc" ]] && . "${AZUREGIT}/bashrc"
