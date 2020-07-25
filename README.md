@@ -31,27 +31,39 @@ Run a [python] script with psub and forget. psub will deallocate resources once 
 ### Initiate azurecli [Requirements](#Requirements)
   - See *Requirements* section
 
-### Run script
-  - On Azure virtual machine,
+## Uninstallation
+  - Delete the folder [azure_scripts](./)
 
-`nohup linux_cuda_installation.sh [<PACKAGE_FOLDER_NAME>] 2>&1 >> installation.log`
+`rm -rf ${HOME}/azure_scripts/`
+
+  - remove line containing "azure_scripts" from the file `~/.bashrc`
+```
+sed -i -e 's/^.*azure_scripts.*$//g' ${HOME}/.bashrc
+```
+
 
 ## Usage
 
   - run psub command of the form
 
-`psub [-e <PACKAGE_FOLDER_NAME>] <command> &`
+`nohup psub [-e <PACKAGE_FOLDER_NAME>] <command> &`
 
   - NOTE THE TRAILING '&'
+
+## Install packages
+  - On Azure virtual machine,
+
+`psub linux_cuda_installation.sh [<PACKAGE_FOLDER_NAME>] 2>&1 >> installation.log &`
+
 
 ## Requirements
 
 After copying azure_scripts to the Azure VM,
 1. Read [ALL related documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
 
-2. Run [linus_install_azurecli.sh](bin/linux_install_azurecli.sh) with modifications
+2. Run [linux_install_azurecli.sh](bin/linux_install_azurecli.sh) with modifications
 
-  `bash ~/azure_scripts/linux_install_azure.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
+  `bash ~/azure_scripts/bin/linux_install_azurecli.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
 
   - Login to azure virtual machine:
 

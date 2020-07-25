@@ -53,10 +53,8 @@ function variableDeclaration() {
                 ;;
         esac
     done
-    PKG_NAME="$1"
-    shift
     AZUREGIT="${HOME}/azure_scripts"
-    PYPKGENV="${AZUREGIT}/.virtualenvs/${PKG_NAME}ENV"
+    [[ -n "${PKG_NAME}" ]] && PYPKGENV="${AZUREGIT}/.virtualenvs/${PKG_NAME}ENV"
     PIDREC_D="${AZUREGIT}/pid_recs"
     [[ ! -d PYPKGENV ]] && PYPKGENV=""
     [[ -z ${VM_NAME} ]] \
@@ -96,7 +94,10 @@ function runProg() {
 function watchProg() {
     while [[ -d /proc/${pid} ]]; do
         sleep 1
-    done && rm "${PIDREC_D}/${stime}.pid" && vmDeallocate
+    done && rm "${PIDREC_D}/${stime}.pid"
+    while [[ -d "${PIDREC_D}/" ]]; do
+        sleep 1
+    done && vmDeallocate
 }
 
 function main() {
