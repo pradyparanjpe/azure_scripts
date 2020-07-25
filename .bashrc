@@ -19,7 +19,5 @@
 # along with Prady_AzScripts.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# supply values [CASE SPECIFIC] in the quotes
-
-export VM_NAME=""  # Virtual machine name
-export VM_GROUP=""  # Virtual machine group name here
+[[ -f "${HOME}/azure_scripts/bashrc" ]] && . "${HOME}/azure_scripts/bashrc"
+export PATH="${PATH}:${HOME}/azure_scripts/bin";
