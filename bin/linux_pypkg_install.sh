@@ -125,7 +125,7 @@ function venvCreate() {
         mkdir -p "${PYPKGENV}"
         [[ -f "${PYPKGVENV}/bin/activate" ]] \
             || python3 -m "venv" "${PYPKGENV}"
-        if[[ $? -ne 0 ]]; then
+        if [[ $? -ne 0 ]]; then
             echo "Could not create environment, skipping..."
             continue
         fi

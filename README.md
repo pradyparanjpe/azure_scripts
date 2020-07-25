@@ -18,7 +18,7 @@ Run a [python] script with psub and forget. psub will deallocate resources once 
 `git pull https://github.com/pradyparanjpe/azure_scripts.git`
 
 ### Modifications
-  1. See [Package requirements](Package requirements)
+  1. See [Package requirements](#Package requirements)
 
   2. Add _your packages_ in the [packages](./packages/) folder's copy inside your local machine
 
@@ -53,7 +53,7 @@ sed -i -e 's/^.*azure_scripts.*$//g' ${HOME}/.bashrc
 ## Install packages
   - On Azure virtual machine,
 
-`psub linux_cuda_installation.sh [<PACKAGE_FOLDER_NAME>] 2>&1 >> installation.log &`
+`psub linux_pypkg_install.sh [<PACKAGE_FOLDER_NAME>] 2>&1 >> installation.log &`
 
 
 ## Requirements
@@ -61,9 +61,7 @@ sed -i -e 's/^.*azure_scripts.*$//g' ${HOME}/.bashrc
 After copying azure_scripts to the Azure VM,
 1. Read [ALL related documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
 
-2. Run [linux_install_azurecli.sh](bin/linux_install_azurecli.sh) with modifications
-
-  `bash ~/azure_scripts/bin/linux_install_azurecli.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
+2. Run [linux_init_azurecli.sh](bin/linux_init_azurecli.sh) with modifications `bash ~/azure_scripts/bin/linux_init_azurecli.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
 
   - Login to azure virtual machine:
 
