@@ -18,7 +18,7 @@ Run a [python] script with psub and forget. psub will deallocate resources once 
 `git pull https://github.com/pradyparanjpe/azure_scripts.git`
 
 ### Modifications
-  1. See [Package requirements](#Package requirements)
+  1. See [Package requirements](#Package\ requirements)
 
   2. Add _your packages_ in the [packages](./packages/) folder's copy inside your local machine
 

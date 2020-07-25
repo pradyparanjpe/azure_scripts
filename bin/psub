@@ -84,9 +84,10 @@ function runProg() {
     [[ -n "${PYPKGENV}" ]] && source "${PYPKGENV}/bin/activate"
 
     stime="$(date "+%Y%m%d%H%M%S")"
+    mkdir -p "${PIDREC_D}"
     echo "Running command"
     echo "${PROG_CLI}"
-    nohup ${PROG_CLI} 2>&1 >> "./${stime}.run.${PKG_NAME}.log" &
+    nohup ${PROG_CLI} 2>&1 >> "./${stime}.${PKG_NAME}run.log" &
     pid="$!"
     echo "${pid}" > "${PIDREC_D}/${stime}.pid"
 }
