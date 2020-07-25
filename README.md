@@ -4,7 +4,7 @@
 _*NOTING HERE IS TESTED*_
 
 ## Application:
-Install _packages_ on Azure Ubuntu >= 18.04LTS Virtual Machine instance.
+Install _packages_ on Azure linux Virtual Machine instance.
 Save money by deallocating the VM instance after installation.
 
 ## Installation:
@@ -28,7 +28,7 @@ See *Requirements* section
 ### Run script
 On Azure virtual machine,
 
-`nohup ${HOME}/azure_scripts/ubuntu_cuda_installation.sh <PACKAGE_FOLDER_NAME> 2>&1 >> installation.log`
+`nohup ${HOME}/azure_scripts/linux_cuda_installation.sh <PACKAGE_FOLDER_NAME> 2>&1 >> installation.log`
 
 ## Requirements
 On the Azure VM, issue the following commands with necessary modifications:
@@ -44,7 +44,7 @@ On the Azure VM, issue the following commands with necessary modifications:
 3. Azure CLI installation: PROCEED WITH CAUTION, read [ALL related documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
   - Run the raw script without without arguments. It will install AzureCLI.
 
-  `${HOME}/azure_scripts/ubuntu_cuda_installation.sh`
+  `${HOME}/azure_scripts/linux_cuda_installation.sh`
 
   - Login to azure virtual machine:
 

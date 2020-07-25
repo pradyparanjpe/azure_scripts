@@ -23,30 +23,69 @@
 date
 echo "Started script"
 
+
 # Functions
-aptBasics() {
+function aptBasics() {
     date
     echo "Updating APT"
     sudo apt -y update
 }
 
-installAzureCLI() {
-    date
-    aptBasics
-    echo "Install AzureCLI API to deallocate vm after commands are complete"
-
+function debInAzure() {
     # Ready-made recipe
+    aptBasics
     curl -sL "https://aka.ms/InstallAzureCLIDeb" | sudo bash
     [[ $? -ne 0 ]] \
         && echo "Could not install AzureCLI, aborting..." \
         && exit 5
 }
 
-firstRun() {
-    hash az \
-        && echo "AzureCLI is already installed, please provide package name to install."\
-            || installAzureCLI
+function rpmInAzure() {
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo sh -c 'echo -e "[azure-cli]
+name=Azure CLI
+baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
+    sudo yum -y install azure-cli
+    [[ $? -ne 0 ]] \
+        && echo "Could not install AzureCLI, aborting..." \
+        && exit 5
+}
+
+function installAzureCLI() {
+    date
+    echo "Install AzureCLI API to deallocate vm after commands are complete"
+    distrib="$(hostnamectl | grep "Operating" | cut -d ":" -f 2 |cut -d " " -f 2)"
+    case "$distrib" in
+        [Ff]ed* )
+            rpmInAzure
+            ;;
+        [Cc]ent* )
+            rpmInAzure
+            ;;
+        [Rr]ed* )
+            rpmInAzure
+            ;;
+        *[Uu]bunt* )
+            debInAzure
+            ;;
+        [Dd]ebian* )
+            debInAzure
+            ;;
+        *)
+            echo "Could not guess Linux Distribution, aborting..."
+            exit 5
+    esac
+}
+
+function firstRun() {
     echo "AzureCLI Is now installed"
+    hash az \
+        && echo "AzureCLI already installed. \
+If not already done, login as below."\
+            || installAzureCLI
     echo "Now issue the command..."
     echo ""
     echo "az login"
@@ -55,15 +94,52 @@ firstRun() {
     exit 0
 }
 
-variableDeclaration() {
+function variableDeclaration() {
     date
-    echo "checking variables"
-
-    [[ -z ${1} ]] && firstRun && exit 0
+    while test $# -gt 0; do
+        case "$1" in
+            -h|--help)
+                echo ""
+                echo "usage: psub [-h|--help] [-a] [-p PKG] [-n VMN] [-g VMG]"
+                echo ""
+                echo "Optional arguments:"
+                echo "-h|--help Display this help and exit"
+                echo "-a        install AzureCLI API and exit"
+                echo "-p PKG    package name as supplied during installation"
+                echo "          environment will be guessed from this name"
+                echo "-n VMN    Name of virtual machine, used for deallocation"
+                echo "-g VMG    Group of virtual machine, used for deallocation"
+                echo ""
+                exit 0
+                ;;
+            -a)
+                firstRun
+                exit 0
+                ;;
+            -p)
+                shift
+                PKG_NAME=$1
+                shift
+                ;;
+            -n)
+                shift
+                VM_NAME=$1
+                shift
+                ;;
+            -g)
+                shift
+                VM_GROUP=$1
+                shift
+                ;;
+            *)
+                echo "Invalid command"
+                echo "aborting..."
+                vmDeallocate
+                ;;
+        esac
+    done
     AZUREGIT="${HOME}/azure_scripts"
-    PYPKGENV="${AZUREGIT}/.virtualenvs/${1}ENV"
-    PYPKGSRC="${AZUREGIT}/packages/${1}"
-
+    PYPKGENV="${AZUREGIT}/.virtualenvs/${PKG_NAME}ENV"
     [[ -z ${VM_NAME} ]] \
         && echo "Script can't exit automatically, export $VM_NAME, aborting" \
         && exit 5
@@ -73,7 +149,7 @@ variableDeclaration() {
     echo "We are on ${VM_NAME} in the group ${VM_GROUP}"
 }
 
-vmDeallocate() {
+function vmDeallocate() {
     # Done, don't waste any more system time...
     hash az \
         || echo "could not deactivate vm: az AzureCLI API not found. Idle:"
@@ -84,7 +160,7 @@ vmDeallocate() {
     exit 5
 }
 
-installCUDA() {
+function installCUDA() {
     date
     aptBasics
     echo "APT Installing nvidia-cuda-toolkit"
@@ -94,7 +170,7 @@ installCUDA() {
         && vmDeallocate
 }
 
-venvBasics() {
+function venvBasics() {
     date
     echo "Creating PYPKGENV"
     mkdir -p "${PYPKGENV}"
@@ -105,7 +181,7 @@ venvBasics() {
         && vmDeallocate
 }
 
-installPython() {
+function installPython() {
     date
     echo "APT Installing pip, virtualenv"
 
@@ -121,7 +197,7 @@ installPython() {
     alias pip=pip3
 }
 
-pipRequires() {
+function pipRequires() {
     date
     echo "installing PIP requrements"
 
@@ -134,7 +210,7 @@ pipRequires() {
     [[ ${VM_NAME} -ne "DH5A" ]] && pip3 install cupy
 }
 
-installProg() {
+function installProg() {
     date
     [[ ! -d "${PYPKGSRC}" ]] \
         && echo "Package Directory not found, exitting..." \
@@ -154,13 +230,13 @@ installProg() {
     # This helps automatic switching
     ln -s "${PYPKGENV}" "${PYPKGSRC}/.venv"
 
-    echo "PIP installing ${1}"
+    echo "PIP installing ${PKG_NAME}"
     pip3 install "."  # Assume that it contains setup.py
 }
 
-# main program
-main() {
-    variableDeclaration
+function main() {
+    # main program
+    variableDeclaration $@
     hash az || \
         echo "AZURE CLI NOT INSTALLED, resource deallocation not possible"
     hash nvidia-smi || installCUDA
@@ -171,7 +247,7 @@ main() {
     vmDeallocate
 }
 
-main
+main $@
 # Shouldn't reach here
 echo "Idle since"
 date
