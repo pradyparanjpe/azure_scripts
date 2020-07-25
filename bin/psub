@@ -58,10 +58,10 @@ function variableDeclaration() {
     PIDREC_D="${AZUREGIT}/pid_recs"
     [[ ! -d PYPKGENV ]] && PYPKGENV=""
     [[ -z ${VM_NAME} ]] \
-        && echo "Script can't exit automatically, export $VM_NAME, aborting" \
+        && echo "Script can't exit automatically, export VM_NAME, aborting" \
         && exit 5
     [[ -z ${VM_GROUP} ]] \
-        && echo "Script can't exit automatically, export $VM_GROUP, aborting" \
+        && echo "Script can't exit automatically, export VM_GROUP, aborting" \
         && exit 5
     echo "We are on ${VM_NAME} in the group ${VM_GROUP}"
 }
@@ -86,7 +86,7 @@ function runProg() {
     stime="$(date "+%Y%m%d%H%M%S")"
     echo "Running command"
     echo "${PROG_CLI}"
-    nohup $(${PROG_CLI}) 2>&1 >> "./${stime}.run.${PKG_NAME}.log" &
+    nohup ${PROG_CLI} 2>&1 >> "./${stime}.run.${PKG_NAME}.log" &
     pid="$!"
     echo "${pid}" > "${PIDREC_D}/${stime}.pid"
 }
