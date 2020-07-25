@@ -18,7 +18,7 @@ Run a [python] script with psub and forget. psub will deallocate resources once 
 `git pull https://github.com/pradyparanjpe/azure_scripts.git`
 
 ### Modifications
-  1. See [Package requirements](#Package\ requirements)
+  1. See [Package_Requirements](#Package_Requirements)
 
   2. Add _your packages_ in the [packages](./packages/) folder's copy inside your local machine
 
@@ -79,7 +79,7 @@ After copying azure_scripts to the Azure VM,
 `source ~/.bashrc`
 
 
-## Package requirements
+## Package_Requirements
 1. Python:
    - Package should be pip3 compatible.
    - setup.py must be present in the parent package folder, I do not look recursively.
