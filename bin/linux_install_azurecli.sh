@@ -146,7 +146,7 @@ function updateRC() {
         echo "Please provide correct path with -p option"
         exit 5
     else
-        sed -i -e "s/^export AZUREGIT=.*$/export AZUREGIT=\"${AZUREGIT}\"/" \
+        sed -i -e "s|^export AZUREGIT=.*$|export AZUREGIT=\"${AZUREGIT}\"|g" \
             "${AZUREGIT}/.bashrc"
     fi
 
@@ -155,7 +155,7 @@ function updateRC() {
         echo "VM_NAME must be declared for successful deallocation."
         echo "You may now declare it in the bashrc file"
     else
-        sed -i -e "s/^export VM_NAME=.*$/export VM_NAME=\"${VM_NAME}\"/" \
+        sed -i -e "s|^export VM_NAME=.*$|export VM_NAME=\"${VM_NAME}\"|g" \
             "${AZUREGIT}/.bashrc"
     fi
 
@@ -164,7 +164,7 @@ function updateRC() {
         echo "VM_GROUP must be declared for successful deallocation."
         echo "You may now declare it in the bashrc file"
     else
-        sed -i -e "s/^export VM_GROUP=.*$/export VM_GROUP=\"${VM_GROUP}\"/" \
+        sed -i -e "s|^export VM_GROUP=.*$|export VM_GROUP=\"${VM_GROUP}\"|g" \
             "${AZUREGIT}/.bashrc"
     fi
 
