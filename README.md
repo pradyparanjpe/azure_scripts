@@ -45,8 +45,8 @@ On the Azure VM, issue the following commands with necessary modifications:
 1. Let bash read rc file in this project
 
 ```
-echo "[[ -f $\{HOME\}/azure_scripts/.bashrc ]] \
-    && . $\{HOME\}/azure_scripts/.bashrc" >> ${HOME}/.bashrc
+echo "[[ -f $\{HOME\}/azure_scripts/.bashrc ]] && \
+. $\{HOME\}/azure_scripts/.bashrc" >> ${HOME}/.bashrc
 ```
 
 
