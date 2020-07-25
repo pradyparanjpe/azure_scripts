@@ -59,9 +59,12 @@ sed -i -e 's/^.*azure_scripts.*$//g' ${HOME}/.bashrc
 ## Requirements
 
 After copying azure_scripts to the Azure VM,
+
 1. Read [ALL related documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest)
 
-2. Run [linux_init_azurecli.sh](bin/linux_init_azurecli.sh) with modifications `bash ~/azure_scripts/bin/linux_init_azurecli.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
+2. Run [linux_init_azurecli.sh](bin/linux_init_azurecli.sh) with modifications
+
+`bash ~/azure_scripts/bin/linux_init_azurecli.sh -n <VMN> -g <VMG> -p <AZUREGITPATH>`
 
   - Login to azure virtual machine:
 
@@ -71,6 +74,10 @@ After copying azure_scripts to the Azure VM,
 
   - Now, the AzureCLI API has been granted access to manage your Azure virtual machines.
   
+3. Update linux environment
+
+`source ~/.bashrc`
+
 
 ## Package requirements
 1. Python:
