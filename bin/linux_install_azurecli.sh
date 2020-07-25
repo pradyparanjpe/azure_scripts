@@ -88,7 +88,7 @@ If not already done, login as below."\
     exit 0
 }
 
-function variableDeclaration() {
+function argParse() {
     date
     AZUREGIT="${HOME}/azure_scripts"
     while test $# -gt 0; do
@@ -155,8 +155,9 @@ function updateRC() {
         echo "VM_NAME must be declared for successful deallocation."
         echo "You may now declare it in the bashrc file"
     else
-        sed -i -e "s|^export VM_NAME=.*$|export VM_NAME=\"${VM_NAME}\"|g" \
+        sed -i -e "s|^export VM_NAME=.*$||g" \
             "${AZUREGIT}/.bashrc"
+        echo "export VM_NAME=\"${VM_NAME}\"" >> "${AZUREGIT}/.bashrc"
     fi
 
     # declare VM_GROUP in azure_scripts/.bashrc
@@ -164,8 +165,9 @@ function updateRC() {
         echo "VM_GROUP must be declared for successful deallocation."
         echo "You may now declare it in the bashrc file"
     else
-        sed -i -e "s|^export VM_GROUP=.*$|export VM_GROUP=\"${VM_GROUP}\"|g" \
+        sed -i -e "s|^export VM_GROUP=.*$||g" \
             "${AZUREGIT}/.bashrc"
+        echo "export VM_GROUP=\"${VM_GROUP}\"" >> "${AZUREGIT}/.bashrc"
     fi
 
     # add azure_scripts/.bashrc to ~/.bashrc
@@ -178,7 +180,7 @@ function updateRC() {
 }
 
 function main() {
-    variableDeclaration "$@"
+    argParse "$@"
     updateRC
 }
 

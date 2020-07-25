@@ -31,7 +31,7 @@ function aptBasics() {
     sudo apt -y update
 }
 
-function variableDeclaration() {
+function argParse() {
     date
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -113,7 +113,7 @@ function installCUDA() {
     hash dnf && rpmCUDA
 }
 
-function venvBasics() {
+function venvCreate() {
     date
     for PYPKG in "$PYPKGLIST"; do
         PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
@@ -123,7 +123,8 @@ function venvBasics() {
         fi
         echo "Creating ${PYPKGENV}"
         mkdir -p "${PYPKGENV}"
-        python3 -m "virtualenv" "${PYPKGENV}" -p `which python3`
+        [[ -f "${PYPKGVENV}/bin/activate" ]] \
+            || python3 -m "venv" "${PYPKGENV}"
         if[[ $? -ne 0 ]]; then
             echo "Could not create environment, skipping..."
             continue
@@ -133,13 +134,10 @@ function venvBasics() {
 
 function installPython() {
     date
-    echo "APT Installing pip, virtualenv"
-
+    echo "APT Installing pip"
     aptBasics
     hash apt && sudo apt -y install python3-pip
-    hash apt && sudo apt -y install python3-virtualenv
     hash dnf && sudo dnf -y install python3-pip
-    hash dnf && sudo dnf -y install python3-virtualenv
 }
 
 function installProg() {
@@ -173,10 +171,11 @@ function installProg() {
 
 function main() {
     # main program
-    variableDeclaration $@
+    argParse "$@"
+    preInstallCheck
     hash nvidia-smi || installCUDA
     hash pip3 || installPython
-    [[ -f "${PYPKGVENV}/bin/activate" ]] || venvBasics
+    venvCreate
     installProg
     vmDeallocate
 }

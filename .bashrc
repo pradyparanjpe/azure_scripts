@@ -19,10 +19,6 @@
 # along with Prady_AzScripts.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-export AZUREGIT="${HOME}/azure_scripts"
-export VM_NAME=""
-export VM_GROUP=""
-
 [[ -f "${AZUREGIT}/bashrc" ]] && . "${AZUREGIT}/bashrc"
 export PATH="${PATH}:${AZUREGIT}/bin"
-
+export AZUREGIT="${HOME}/azure_scripts"
