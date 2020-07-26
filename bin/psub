@@ -27,7 +27,7 @@ echo "Started script"
 # Functions
 function variableDeclaration() {
     date
-    while test $# -gt 0; do
+    while [[ $# -gt 0 ]]; do
         case "$1" in
             -h|--help)
                 echo ""
@@ -96,7 +96,8 @@ function watchProg() {
     while [[ -d /proc/${pid} ]]; do
         sleep 1
     done && rm "${PIDREC_D}/${stime}.pid"
-    while [[ -d "${PIDREC_D}/" ]]; do
+    while [[ -z "$(ls ${PIDREC_D})" ]]; do
+        # Wait for others...
         sleep 1
     done && vmDeallocate
 }
