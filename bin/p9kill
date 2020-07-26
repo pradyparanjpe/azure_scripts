@@ -58,7 +58,7 @@ function argParse() {
 }
 
 function massacre() {
-    if [[ -z kpid ]]; then
+    if [[ -z "${kpid}" ]]; then
         echo ""
         echo "Please enter parent's pid."
         echo "I should't be kill everything..."
@@ -69,11 +69,13 @@ function massacre() {
             echo "PID was not found."
             echo ""
         else
+            echo " Trying to send signal -${signal} to \
+kill ${kpid} and all its children"
             for child in $(pstree "${kpid}" -ap \
                                |grep , \
                                |cut -d "," -f 2 \
                                |cut -d " " -f 1); do
-                kill "" "${child}"
+                kill "-${signal}" "${child}"
             done
         fi
     fi
@@ -81,6 +83,7 @@ function massacre() {
 
 function main() {
     argParse "$@"
+    massacre
 }
 
 main "$@"
