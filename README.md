@@ -44,13 +44,18 @@ sed -i -e 's/^.*azure_scripts.*$//g' ${HOME}/.bashrc
 
 ## Usage
 
-  - run psub command of the form
+  1. Run psub command of the form
 
 `nohup psub [-e <PACKAGE_FOLDER_NAME>] <command> &`
 
-  - NOTE THE TRAILING '&'
+    - NOTE THE TRAILING '&'
+  
+  2. Kill a submitted process, and all child-process created by it.
+  
+`p9kill -15 <PID>`
 
-## Install packages
+
+## Install Packages
   - On Azure virtual machine,
 
 `psub linux_pypkg_install.sh [<PACKAGE_FOLDER_NAME>] 2>&1 >> installation.log &`
