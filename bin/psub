@@ -31,7 +31,7 @@ function variableDeclaration() {
         case "$1" in
             -h|--help)
                 echo ""
-                echo "usage: psub [-e package_name] <cli command> &"
+                echo "usage: psub [-h|--help] [[-e package_name] <cli command> &]"
                 echo ""
                 echo "Optional arguments:"
                 echo "-e    package name as supplied during installation"

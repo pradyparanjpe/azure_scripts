@@ -85,6 +85,7 @@ If not already done, login as below."\
     echo "az login"
     echo ""
     echo "...and follow instructions"
+    updateRC
     exit 0
 }
 
@@ -95,7 +96,7 @@ function argParse() {
         case "$1" in
             -h|--help)
                 echo ""
-                echo "usage: psub [-h|--help] [-a] [-n VMN] [-g VMG]"
+                echo "usage: psub [-h|--help] [-a [-n VMN] [-g VMG] [-p PATH]]"
                 echo ""
                 echo "Optional arguments:"
                 echo "-h|--help Display this help and exit"
@@ -104,11 +105,11 @@ function argParse() {
                 echo "-g VMG    Group of virtual machine, used for deallocation"
                 echo "-p PATH   PATH to azure_scripts directory if not in ~"
                 echo ""
-                exit 0
+                shift
                 ;;
             -a)
                 firstRun
-                exit 0
+                shift
                 ;;
             -n)
                 shift
@@ -126,9 +127,8 @@ function argParse() {
                 shift
                 ;;
             *)
-                echo "Invalid command"
-                echo "aborting..."
-                vmDeallocate
+                firsRun
+                shift
                 ;;
         esac
     done
@@ -181,7 +181,6 @@ function updateRC() {
 
 function main() {
     argParse "$@"
-    updateRC
 }
 
 main "$@"

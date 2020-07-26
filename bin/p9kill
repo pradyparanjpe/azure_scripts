@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# -*- coding: utf-8; mode:shell-script -*-
+#
+# Copyright 2020 Pradyumna Paranjape
+#
+# This file is part of Prady_AzScripts.
+#
+# Prady_AzScripts is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Prady_AzScripts is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Prady_AzScripts.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+function argParse() {
+    shopt -s extglob
+    signal="9"
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                echo "usage p9kill [-h|--help] [[-s SIG] [-SIG] PID]"
+                echo ""
+                echo "CAUTION: Default signal is 9."
+                echo "DO NOT PROCEED BEFORE UNDERSTANDING WHAT IT MEANS"
+                echo ""
+                echo "Optional arguments:"
+                echo "-h|--help    Display this help and exit"
+                echo "-s SIG       Send kill SIG. Default: 9"
+                echo "-SIG         Send kill SIG. Default: 9"
+                echo ""
+                echo "Positional arguments:"
+                echo "PID    Process id of job to kill"
+                shift
+                ;;
+            -s)
+                shift
+                signal="$1"
+                shift
+                ;;
+            -[0-9]+)
+                shift
+                signal="$1"
+                shift
+                ;;
+            *)
+                kpid="$1"
+                shift
+                ;;
+        esac
+    done
+}
+
+function massacre() {
+    if [[ -z kpid ]]; then
+        echo ""
+        echo "Please enter parent's pid."
+        echo "I should't be kill everything..."
+        echo ""
+    else
+        if [[ -z $(pstree "${kpid}") ]]; then
+            echo ""
+            echo "PID was not found."
+            echo ""
+        else
+            for child in $(pstree "${kpid}" -ap \
+                               |grep , \
+                               |cut -d "," -f 2 \
+                               |cut -d " " -f 1); do
+                kill "" "${child}"
+            done
+        fi
+    fi
+}
+
+function main() {
+    argParse "$@"
+}
+
+main "$@"
