@@ -16,7 +16,6 @@ fi
 
 ## User specific aliases and functions
 
-. ${HOME}/.varrc
 RUNCOM="${HOME}/.runcom"
 
 for rcfile in colorlibrc bashrc networkingrc aliasrc functionrc templatevarsrc emacsrc; do
