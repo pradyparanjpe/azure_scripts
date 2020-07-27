@@ -144,7 +144,7 @@ function installPython() {
 
 function installProg() {
     date
-    for PYPKG in "$PYPKGLIST"; do
+    for PYPKG in $PYPKGLIST; do
         PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
         PYPKGSRC="${AZUREGIT}/packages/${PYPKG}"
         if [[ ! -d "${PYPKGSRC}" ]]; then
