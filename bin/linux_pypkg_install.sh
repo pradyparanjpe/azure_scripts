@@ -85,13 +85,7 @@ function preInstallCheck() {
 }
 
 function vmDeallocate() {
-    # Done, don't waste any more system time...
-    hash az 2>/dev/null \
-        || echo "could not deactivate vm: az AzureCLI API not found. Idle:"
-    date
-    echo "Trying to power off and deallocate vm"
-    sudo az vm deallocate -g ${VM_GROUP} -n ${VM_NAME} --no-wait
-    # We shouldn't have really reach here
+    ${AZUREGIT}/deallocate_self.sh
     exit 5
 }
 
