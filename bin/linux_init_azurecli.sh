@@ -35,7 +35,7 @@ function debInAzure() {
 }
 
 function rpmInAzure() {
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo rpm --import "https://packages.microsoft.com/keys/microsoft.asc"
     sudo sh -c 'echo -e "[azure-cli]
 name=Azure CLI
 baseurl=https://packages.microsoft.com/yumrepos/azure-cli
@@ -54,19 +54,19 @@ function installAzureCLI() {
     distrib="$(hostnamectl | grep "Operating" | cut -d ":" -f 2 |cut -d " " -f 2)"
     case "$distrib" in
         [Ff]ed* )
-            rpmInAzure
+            rpmInAzure || exit 5
             ;;
         [Cc]ent* )
-            rpmInAzure
+            rpmInAzure || exit 5
             ;;
         [Rr]ed* )
-            rpmInAzure
+            rpmInAzure || exit 5
             ;;
         *[Uu]bunt* )
-            debInAzure
+            debInAzure || exit 5
             ;;
         [Dd]ebian* )
-            debInAzure
+            debInAzure || exit 5
             ;;
         *)
             echo "Could not guess Linux Distribution, aborting..."
@@ -79,13 +79,13 @@ function firstRun() {
     hash az 2>/dev/null \
         && echo "AzureCLI already installed. \
 If not already done, login as below."\
-            || installAzureCLI
+            || installAzureCLI || exit 5
     echo "Now issue the command..."
     echo ""
     echo "az login"
     echo ""
     echo "...and follow instructions"
-    updateRC
+    updateRC || exit 5
     exit 0
 }
 
@@ -184,7 +184,7 @@ function updateRC() {
 
 function main() {
     argParse "$@" || exit 5
-    updateRC || exit 5
+    firstRun || exit 5
 }
 
 main "$@"
