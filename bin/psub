@@ -67,7 +67,7 @@ function variableDeclaration() {
 }
 
 function vmDeallocate() {
-    ${AZUREGIT}/deallocate_self.sh
+    ${AZUREGIT}/bin/deallocate_self.sh
 }
 
 function runProg() {

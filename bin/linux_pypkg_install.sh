@@ -85,7 +85,7 @@ function preInstallCheck() {
 }
 
 function vmDeallocate() {
-    ${AZUREGIT}/deallocate_self.sh
+    ${AZUREGIT}/bin/deallocate_self.sh
     exit 5
 }
 
