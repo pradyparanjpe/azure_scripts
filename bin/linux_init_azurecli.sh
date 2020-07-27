@@ -135,7 +135,7 @@ function updateRC() {
     if [[ -d "${AZUREGIT}" ]]; then
         true
     else
-        AZUREGIT="$(find ${HOME} -name "azure_scripts"|tail -1)"
+        AZUREGIT="$(find ${HOME} -name "azure_scripts" 2>/dev/null |tail -1)"
     fi
     if [[ -z "${AZUREGIT}" ]]; then
         echo "Can't find azure_scripts directory..."
@@ -145,7 +145,6 @@ function updateRC() {
         sed -i -e "s|^export AZUREGIT=.*$|export AZUREGIT=\"${AZUREGIT}\"|g" \
             "${AZUREGIT}/.bashrc"
     fi
-
     # declare VM_NAME in azure_scripts/.bashrc
     if [[ -z "${VM_NAME}" ]]; then
         echo "VM_NAME must be declared for successful deallocation."
@@ -166,12 +165,21 @@ function updateRC() {
         echo "export VM_GROUP=\"${VM_GROUP}\"" >> "${AZUREGIT}/.bashrc"
     fi
 
+    # If Home doesn't have .bashrc, add it
+    if [[ -f "${HOME}/.bashrc" ]]; then
+        echo "${HOME}/.bashrc file found, appending some lines to it"
+    else
+        cp -r "${AZUREGIT}/templates/.runcom" "${HOME}/."
+        cp "${AZUREGIT}/templates/.bashrc" "${HOME}/."
+        echo "Attempted to create ${HOME}/.bashrc because it didn't exist"
+    fi
+
     # add azure_scripts/.bashrc to ~/.bashrc
     if [[ "$(cat ${HOME}/.bashrc)" =~ ". ${AZUREGIT}/.bashrc" ]]; then
         true
     else
         echo "[[ -f ${AZUREGIT}/.bashrc ]] && . ${AZUREGIT}/.bashrc" \
-             >> ${HOME}/.bashrc
+             >> "${HOME}/.bashrc"
     fi
 }
 
