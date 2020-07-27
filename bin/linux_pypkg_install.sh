@@ -138,8 +138,8 @@ function installPython() {
     date
     echo "APT Installing pip"
     aptBasics
-    hash apt 2>/dev/null && sudo apt -y install python3-pip
-    hash dnf 2>/dev/null && sudo dnf -y install python3-pip
+    hash apt 2>/dev/null && sudo apt -y install python3-pip python3-venv
+    hash dnf 2>/dev/null && sudo dnf -y install python3-pip python3-venv
 }
 
 function installProg() {
