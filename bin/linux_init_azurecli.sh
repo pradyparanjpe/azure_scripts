@@ -169,7 +169,6 @@ function updateRC() {
     if [[ -f "${HOME}/.bashrc" ]]; then
         echo "${HOME}/.bashrc file found, appending some lines to it"
     else
-        cp -r "${AZUREGIT}/templates/.runcom" "${HOME}/."
         cp "${AZUREGIT}/templates/.bashrc" "${HOME}/."
         echo "Attempted to create ${HOME}/.bashrc because it didn't exist"
     fi
