@@ -80,7 +80,7 @@ function preInstallCheck() {
         PYPKGLIST="PKG_NAME"
     else
         # Discover packages
-        PYPKGLIST="$(ls -d ${AZUREGIT}/packages/*/)"
+        PYPKGLIST="$(ls -d ${AZUREGIT}/packages/*/ |rev| cut -d "/" -f 2 |rev)"
     fi
 }
 
@@ -102,7 +102,7 @@ function rpmCUDA() {
          http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
     sudo dnf -y module install nvidia-driver:latest-dkms
     sudo dnf -y install cuda
-    echo "Installed propreitary nvidia-cuda"
+    echo "Propreitary nvidia-cuda installation attempted"
     }
 
 function installCUDA() {
@@ -144,11 +144,11 @@ function installPython() {
 
 function installProg() {
     date
-    for PYPKG in $PYPKGLIST; do
+    for PYPKG in "$PYPKGLIST"; do
         PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
         PYPKGSRC="${AZUREGIT}/packages/${PYPKG}"
         if [[ ! -d "${PYPKGSRC}" ]]; then
-            echo "Package Directory not found, exitting..."
+            echo "Package Directory ${PYPKGSRC} not found, exitting..."
             continue
         fi
         echo "installing Program"
