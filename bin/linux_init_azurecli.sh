@@ -96,7 +96,7 @@ function argParse() {
         case "$1" in
             -h|--help)
                 echo ""
-                echo "usage: psub [-h|--help] [-a [-n VMN] [-g VMG] [-p PATH]]"
+                echo "usage: bash ./linux_init_azurecli.sh [-h|--help] [-a [-n VMN] [-g VMG] [-p PATH]]"
                 echo ""
                 echo "Optional arguments:"
                 echo "-h|--help Display this help and exit"
@@ -105,10 +105,6 @@ function argParse() {
                 echo "-g VMG    Group of virtual machine, used for deallocation"
                 echo "-p PATH   PATH to azure_scripts directory if not in ~"
                 echo ""
-                shift
-                ;;
-            -a)
-                firstRun
                 shift
                 ;;
             -n)
@@ -127,8 +123,8 @@ function argParse() {
                 shift
                 ;;
             *)
-                firsRun
-                shift
+                echo "Invalid argument"
+                exit 5
                 ;;
         esac
     done
@@ -180,7 +176,8 @@ function updateRC() {
 }
 
 function main() {
-    argParse "$@"
+    argParse "$@" || exit 5
+    updateRC || exit 5
 }
 
 main "$@"
