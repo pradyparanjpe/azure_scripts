@@ -28,7 +28,7 @@ echo "Started script"
 function aptBasics() {
     date
     echo "Updating APT"
-    sudo apt -y update
+    sudo apt-get update
 }
 
 function argParse() {
@@ -107,8 +107,8 @@ function rpmCUDA() {
 
 function installCUDA() {
     date
-    hash apt 2>/dev/null && aptBasics
-    hash apt 2>/dev/null && sudo apt -y install nvidia-cuda-toolkit && \
+    hash apt-get 2>/dev/null && aptBasics
+    hash apt-get 2>/dev/null && sudo apt-get install -y nvidia-cuda-toolkit && \
         echo "installed cuda-toolkit"
     hash dnf 2>/dev/null && rpmCUDA
 }
@@ -138,8 +138,8 @@ function installPython() {
     date
     echo "APT Installing pip"
     aptBasics
-    hash apt 2>/dev/null && sudo apt -y install python3-pip python3-venv
-    hash dnf 2>/dev/null && sudo dnf -y install python3-pip python3-venv
+    hash apt 2>/dev/null && sudo apt-get install -y python3-pip python3-venv
+    hash dnf 2>/dev/null && sudo dnf install -y python3-pip python3-venv
 }
 
 function installProg() {
