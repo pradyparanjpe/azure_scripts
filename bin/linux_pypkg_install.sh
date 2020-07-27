@@ -115,6 +115,7 @@ function installCUDA() {
 
 function venvCreate() {
     date
+    mkdir -p "${AZUREGIT}/.virtualenvs"
     for PYPKG in "$PYPKGLIST"; do
         PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
         if [[ ! -f "${AZUREGIT}/packages/${PYPKG}/setup.py" ]]; then
