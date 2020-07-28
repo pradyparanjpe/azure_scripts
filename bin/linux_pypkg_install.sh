@@ -154,6 +154,8 @@ function installPython() {
 
 function installProg() {
     date
+    sudo updatedb
+    source "${HOME}/.bashrc"
     for PYPKG in $PYPKGLIST; do
         PYPKGENV="${AZUREGIT}/.virtualenvs/${PYPKG}ENV"
         PYPKGSRC="${AZUREGIT}/packages/${PYPKG}"
