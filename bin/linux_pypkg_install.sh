@@ -185,8 +185,8 @@ function main() {
     # main program
     argParse "$@"
     preInstallCheck
-    hash 2>/dev/null nvidia-smi || installCUDA
-    hash 2>/dev/null pip3 || installPython
+    installCUDA
+    installPython
     venvCreate
     installProg
     vmDeallocate
