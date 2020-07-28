@@ -90,20 +90,36 @@ function vmDeallocate() {
 }
 
 function rpmCUDA() {
-    sudo dnf -y install kernel-devel-$(uname -r) kernel-headers-$(uname -r)
-    sudo dnf -y install gcc
+    sudo dnf -y install "kernel-devel-$(uname -r)" "kernel-headers-$(uname -r)"
+    sudo dnf -y install "gcc" "g++"
     sudo dnf -y config-manager --add-repo \
-         http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
-    sudo dnf -y module install nvidia-driver:latest-dkms
-    sudo dnf -y install cuda
+         "http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo"
+    sudo dnf -y module install "nvidia-driver:latest-dkms"
+    sudo dnf -y install "cuda"
+    nvidia_base="https://developer.download.nvidia.com/compute/machine-learning/repos/rhel8/x86_64"
+    dev_deps="libcudnn8-devel-8.0.2.39-1.cuda10.2.x86_64.rpm libcudnn8-8.0.2.39-1.cuda10.2.x86_64.rpm libnccl-2.7.8-1+cuda10.2.x86_64.rpm libnccl-devel-2.7.8-1+cuda10.2.x86_64.rpm"
+    for req in $dev_deps; do
+        wget "${nvidia_base}/${req}"
+        sudo apt-get install -y "./${req}" && rm "./${req}"
+    done
     echo "Propreitary nvidia-cuda installation attempted"
     }
 
+function debCUDA() {
+    aptBasics
+    sudo apt-get install -y nvidia-cuda-toolkit
+    sudo apt-get install -y cuda
+    nvidia_base="https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64"
+    dev_deps="libcudnn8_8.0.2.39-1+cuda10.2_amd64.deb libcudnn8-dev_8.0.2.39-1+cuda10.2_amd64.deb libnccl-dev_2.7.8-1+cuda10.2_amd64.deb libnccl2_2.7.8-1+cuda10.2_amd64.deb"
+    for req in $dev_deps; do
+        wget "${nvidia_base}/${req}"
+        sudo apt-get install -y "./${req}" && rm "./${req}"
+    done
+    echo "Propreitary nvidia-cuda installation attempted"
+}
 function installCUDA() {
     date
-    hash apt-get 2>/dev/null && aptBasics
-    hash apt-get 2>/dev/null && sudo apt-get install -y nvidia-cuda-toolkit && \
-        echo "installed cuda-toolkit"
+    hash apt-get 2>/dev/null && debCUDA
     hash dnf 2>/dev/null && rpmCUDA
 }
 
