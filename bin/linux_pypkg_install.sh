@@ -107,6 +107,8 @@ function rpmCUDA() {
 
 function debCUDA() {
     aptBasics
+    sudo apt install "linux-headers-$(uname -r)"
+    sudo dpkg -i cuda-repo-ubuntu_16.04_$(uname -m).deb
     sudo apt-get install -y nvidia-cuda-toolkit
     sudo apt-get install -y cuda
     nvidia_base="https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64"
