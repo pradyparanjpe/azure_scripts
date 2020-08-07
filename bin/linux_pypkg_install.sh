@@ -91,11 +91,11 @@ function vmDeallocate() {
 
 function rpmCUDA() {
     sudo dnf -y install "kernel-devel-$(uname -r)" "kernel-headers-$(uname -r)"
-    sudo dnf -y install "gcc" "g++"
+    sudo dnf -y install "gcc" "gcc-g++"
     sudo dnf -y config-manager --add-repo \
          "http://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo"
     sudo dnf -y module install "nvidia-driver:latest-dkms"
-    sudo dnf -y install "cuda"
+    sudo dnf -y install "cuda-10-2"
     nvidia_base="https://developer.download.nvidia.com/compute/machine-learning/repos/rhel8/x86_64"
     dev_deps="libcudnn8-devel-8.0.2.39-1.cuda10.2.x86_64.rpm libcudnn8-8.0.2.39-1.cuda10.2.x86_64.rpm libnccl-2.7.8-1+cuda10.2.x86_64.rpm libnccl-devel-2.7.8-1+cuda10.2.x86_64.rpm"
     for req in $dev_deps; do
