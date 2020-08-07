@@ -26,7 +26,7 @@ function main() {
         || echo "could not deactivate vm: az AzureCLI API not found. Idle:"
     date
     echo "Trying to power off and deallocate vm"
-    sudo az vm deallocate -g ${VM_GROUP} -n ${VM_NAME} --no-wait
+    az vm deallocate -g ${VM_GROUP} -n ${VM_NAME} --no-wait
     # We shouldn't have really reach here
     exit 5
 }

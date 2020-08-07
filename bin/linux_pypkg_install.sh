@@ -90,6 +90,7 @@ function vmDeallocate() {
 }
 
 function rpmCUDA() {
+    sudo dnf -y install "git"
     sudo dnf -y install "kernel-devel-$(uname -r)" "kernel-headers-$(uname -r)"
     sudo dnf -y install "gcc" "gcc-g++"
     sudo dnf -y config-manager --add-repo \
