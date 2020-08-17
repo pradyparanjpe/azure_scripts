@@ -53,7 +53,7 @@ function variableDeclaration() {
                 ;;
         esac
     done
-    AZUREGIT="${HOME}/azure_scripts"
+    [[ -z "${AZUREGIT}"]] && AZUREGIT="${HOME}/azure_scripts"
     [[ -n "${PKG_NAME}" ]] && PYPKGENV="${AZUREGIT}/.virtualenvs/${PKG_NAME}ENV"
     PIDREC_D="${AZUREGIT}/pid_recs"
     [[ ! -d PYPKGENV ]] && PYPKGENV=""
